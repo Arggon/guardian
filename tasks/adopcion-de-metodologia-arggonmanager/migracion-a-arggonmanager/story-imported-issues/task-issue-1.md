@@ -24,3 +24,6 @@ Convertir el motor de copia actual (`guardian/copier.py` + `guardian/backup.py`)
 
 ### 2026-09-13 @Arggon
 Implementado: PR #7 (story checker-core). El issue de GitHub se cerró con referencia al PR.
+
+### 2026-09-13 @Arggon
+Implementado: PR #7 (story checker-core). El issue de GitHub se cerró con referencia al PR.
