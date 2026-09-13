@@ -22,3 +22,6 @@ Implementar la rotación simple decidida en docs/DECISIONS.md §3: ordenar direc
 
 ### 2026-09-13 @Arggon
 Implementado: PR #11 (story rotacion). El issue de GitHub se cerró con referencia al PR.
+
+### 2026-09-13 @Arggon
+Implementado: PR #11 (story rotacion). El issue de GitHub se cerró con referencia al PR. (Este item importado queda todo: el estado done vive en la story que lo implementó; saltar todo→done está prohibido por la convención.)
