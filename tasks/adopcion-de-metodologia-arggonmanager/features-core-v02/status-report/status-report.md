@@ -1,13 +1,17 @@
 ---
 type: story
-status: todo
+status: in_progress
 id: status-report
 title: Reporte de estado de backups (guardian status --json)
+assignee: Arggon
+branch: feat/status-report
 parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
+claimed_at: "2026-09-13T18:17:11.549Z"
 depends_on: [checker-core]
+worktree_path: /home/arggon/Projects/guardian-status-report
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/status-report/status-report.md (story index; required).
