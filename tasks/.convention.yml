@@ -1,4 +1,11 @@
 version: 3
+
+x-worktree:
+  post-start: "uv sync"
+
+x-tracker:
+  auto-commit: true
+
 branch_patterns:
   initiative: "feat/{id}"
   epic: "feat/{id}"
