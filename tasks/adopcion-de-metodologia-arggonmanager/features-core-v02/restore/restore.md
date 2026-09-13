@@ -66,3 +66,6 @@ Implementación completada tras el steal humano (mismo worktree, branch feat/res
   manifiesto ausente, pure read, dest inexistente). Suite: 71 passed + ruff limpio.
 - Docs: README (uso + roadmap), ARCHITECTURE.md (code map), CHANGELOG; spec/plan
   flip a `implemented` (T4 cierra el pipeline).
+
+### 2026-09-13 @Arggon
+Implementación completada en PR (post-steal de arggonhuman): restore verificado contra manifiesto, pure read, exit codes 0/2/3. 71 tests, ruff limpio, spec/plan a implemented.
