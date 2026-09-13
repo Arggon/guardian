@@ -23,3 +23,6 @@ issue: 2
 
 ### 2026-09-13 @Arggon
 Implementado: PR #10 (story verify). El issue de GitHub se cerró con referencia al PR.
+
+### 2026-09-13 @Arggon
+Implementado: PR #10 (story verify). El issue de GitHub se cerró con referencia al PR. (Este item importado queda todo: el estado done vive en la story que lo implementó; saltar todo→done está prohibido por la convención.)
