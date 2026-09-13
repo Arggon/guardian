@@ -10,7 +10,6 @@ labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
 depends_on: [verify]
-worktree_path: /home/arggon/Projects/guardian-restore
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/restore/restore.md (story index; required).

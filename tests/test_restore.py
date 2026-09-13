@@ -155,3 +155,22 @@ def test_restore_creates_dest_if_missing(environment, tmp_path):
     run_restore(cfg, backup_dir.name, out)
 
     assert (out / "documentos" / "sub" / "foto.bin").read_bytes() == b"\x00\x01\x02" * 100
+
+
+def test_restore_works_after_source_deleted(environment, tmp_path):
+    """El caso de uso real: el origen ya no está y lo recuperamos del backup.
+
+    Regresión de bug-restore-enosource: load_config no debe exigir fuentes
+    existentes cuando el comando es restore (solo usa destination).
+    """
+    cfg, cfg_file, src, dest_root, backup_dir = environment
+    out = tmp_path / "recuperado"
+
+    import shutil
+
+    shutil.rmtree(src)  # el origen desaparece
+
+    result = run_restore(cfg, backup_dir.name, out)
+
+    assert (out / "documentos" / "nota.txt").read_text(encoding="utf-8") == "hola guardian"
+    assert result.files == 2
