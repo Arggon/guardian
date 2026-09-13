@@ -1,12 +1,16 @@
 ---
 type: bug
-status: todo
+status: in_progress
 id: bug-restore-enosource
 title: "restore falla cuando la carpeta origen ya no existe: load_config exige fuentes existentes"
+assignee: Arggon
+branch: fix/bug-restore-enosource
 parent: restore
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
+claimed_at: "2026-09-13T20:55:57.523Z"
+worktree_path: /home/arggon/Projects/guardian-bug-restore-enosource
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/restore/bug-restore-enosource.md
