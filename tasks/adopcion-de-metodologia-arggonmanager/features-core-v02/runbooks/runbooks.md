@@ -1,6 +1,6 @@
 ---
 type: story
-status: in_progress
+status: done
 id: runbooks
 title: Runbooks operativos del pipeline de backup
 assignee: Arggon
@@ -9,7 +9,6 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:11:10.467Z"
 worktree_path: /home/arggon/Projects/guardian-runbooks
 ---
 <!--
