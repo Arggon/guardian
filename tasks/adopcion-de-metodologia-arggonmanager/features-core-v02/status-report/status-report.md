@@ -10,7 +10,6 @@ labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
 depends_on: [checker-core]
-worktree_path: /home/arggon/Projects/guardian-status-report
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/status-report/status-report.md (story index; required).
