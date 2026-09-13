@@ -1,0 +1,13 @@
+# Configuración de ejemplo para guardian.
+# Copiá este archivo a guardian.toml y ajustá las rutas.
+
+[[sources]]
+path = "/home/arggon/Documents"
+
+[[sources]]
+path = "/home/arggon/Pictures"
+
+[destination]
+path = "/mnt/backup/guardian"
+# Cuántos backups con timestamp conservar (rotación, issue #3).
+keep_last = 5
