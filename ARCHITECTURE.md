@@ -1,50 +1,86 @@
 <!-- arggon:generated template="ARCHITECTURE.md" -->
 # guardian — Architecture
 
-<!-- matklad-style skeleton: big picture first, then a code map, then the boundaries.
-     Replace every TODO; delete sections that genuinely do not apply. Keep it current in the
-     same PR that changes the architecture it describes. -->
-
 ## Problem
 
-<!-- What problem does guardian solve, for whom, and what are the hard constraints?
-     Two or three paragraphs at most. Name the non-goals explicitly. -->
+Los backups personales fallan en silencio: la corrida "pasa", el disco se llena, un
+archivo se copia corrupto y el problema aparece recién cuando hay que restaurar.
+`guardian` es un automatizador de backups personales para una sola máquina (la mía):
+respalda carpetas locales hacia un destino en disco con **verificación de integridad
+SHA-256 de cada archivo**, rotación predecible y (planificado) notificación del
+resultado.
 
-TODO: problem statement.
+Restricciones duras: debe correr sin daemon (comando único invocable desde systemd
+timer o cron), sin dependencias de runtime fuera de la stdlib de Python 3.13, y los
+backups deben ser **legibles sin guardian** (archivos + un `manifest.json` JSON
+plano). No-goals explícitos: no hay deduplicación ni backups incrementales (ver
+`docs/DECISIONS.md` §1), no hay cifrado (el destino se considera confiable), no hay
+modo multi-máquina.
 
 ## Big picture
 
-<!-- How does a request / command / event flow through the system? Name the major moving
-     parts and the direction of dependencies. A small diagram helps. -->
+Una corrida de `guardian backup` fluye así:
 
-TODO: end-to-end walkthrough of one representative operation.
+```text
+guardian.toml ──► config.load_config() ──► Config (sources[], destination)
+                                              │
+                                              ▼
+                              backup.run_backup(config, dry_run?)
+                              ── crea <destino>/<YYYYMMDD-HHMMSS>/
+                                              │
+                              por cada origen: copier.copy_tree()
+                              ── copier.copy_file() por archivo:
+                                 hash(origen) → shutil.copy2 → hash(copia)
+                                 mismatch ⇒ descarta la copia + HashMismatch
+                                              │
+                                              ▼
+                              backup.build_manifest() ──► manifest.json
+                                              │
+                                              ▼
+                              cli.main() ──► stdout (plan o resumen) + exit code
+```
+
+Los módulos dependen solo hacia abajo: `cli` → `backup` → (`config`, `copier`).
+El próximo módulo planificado (rotación, issue #3) se apoya en `backup` (lee
+timestamps + manifiestos) y es llamado desde `cli`.
 
 ## Code map
 
-<!-- "You are here" map of the tree. One bullet per directory: what lives here, what must
-     NOT live here. Update in the same PR that moves code. -->
-
 ```text
 guardian/
-  tasks/        # TODO: purpose
-  docs/         # TODO: purpose
-  src/          # TODO: purpose
+  guardian/            # el paquete (mismo nombre que el repo, sin src/: es un CLI chico)
+    cli.py             # argparse: guardian backup [--dry-run]; SOLO parseo y salida
+    config.py          # TOML → Config validada (tomllib); errores = ConfigError
+    copier.py          # motor de copia: shutil.copy2 + SHA-256 doble + FileRecord
+    backup.py          # orquestación: timestamp, corrida por origen, manifest.json
+  tests/               # pytest, una suite por módulo, tmp_path para FS efímero
+  docs/                # DECISIONS.md, FORMAT.md + los docs de gestión (arggon)
+  tasks/               # work items Markdown gestionados por arggon (fuente de verdad)
+  templates/           # templates de work items (story/task/bug/...) usados por arggon
 ```
 
 ## Boundaries and layering rules
 
-<!-- The rules reviewers enforce: allowed dependency directions, module ownership, public
-     API surface, what may import what. Keep the list short and checkable. -->
-
-- TODO: e.g. "the CLI layer may not import storage internals directly".
-- TODO: e.g. "all writes go through <module>".
+- `cli.py` no contiene lógica de negocio: parsea argumentos, llama a `backup`, mapea
+  excepciones a exit codes (0 ok, 2 config, 3 integridad).
+- Todo acceso a disco con intención de copiar pasa por `copier.py`; `backup.py`
+  orquesta pero no implementa copias.
+- `config.py` es el único módulo que lee TOML; devuelve un `Config` inmutable
+  (dataclasses frozen) o lanza `ConfigError` — nunca devuelve parcialmente válido.
+- Los manifiestos solo se escriben por `backup.py` y cumplen `docs/FORMAT.md`;
+  `read_manifest()` es la única puerta de lectura y valida campos mínimos.
 
 ## Invariants
 
-<!-- Properties that must always hold (never overwrite user data, pure reads, etc.).
-     These usually correspond to dedicated tests. -->
-
-- TODO: invariant → test that guards it.
+- Un dry-run **no escribe nada en disco** → `test_run_backup_dry_run_writes_nothing`,
+  `test_copy_file_dry_run_writes_nothing`.
+- Una copia cuyo SHA-256 no coincide con el origen se descarta y aborta con
+  `HashMismatch` (exit 3) → `test_copy_file_detects_corrupted_copy`.
+- Cada corrida escribe a un directorio de timestamp nuevo; nunca pisa backups
+  anteriores → los nombres `YYYYMMDD-HHMMSS` son únicos por segundo y la suite no
+  reutiliza directorios.
+- Un backup sin `manifest.json` se considera incompleto y no verificable
+  (docs/FORMAT.md invariante 1) → `test_read_manifest_missing`.
 
 ---
 

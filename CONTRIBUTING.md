@@ -9,6 +9,23 @@ Thanks for helping. Work is tracked in-tree under `tasks/` (Markdown work items 
 2. Find a claimable item: `arggon list --status todo --json`.
 3. Claim it: `arggon update <id> --status in_progress --assignee <your-login>`. Never steal a claim.
 
+## Development environment (uv + Python 3.13)
+
+This project uses [uv](https://docs.astral.sh/uv/) with Python 3.13 — there is no
+Node/npm toolchain here:
+
+```bash
+uv sync --dev             # crea .venv, instala guardian + pytest + ruff
+uv run pytest             # suite de tests (los tests usan tmp_path, no tocan tu FS)
+uv run ruff check .       # lint (obligatorio antes de cada PR)
+uv run ruff format .      # formato canónico
+uv run guardian backup --dry-run   # smoke test del CLI
+```
+
+The PR checklist item "tests pass locally" means `uv run pytest` **and**
+`uv run ruff check .` both green. Runtime dependencies stay empty on purpose
+(`docs/DECISIONS.md` §4): argue hard before adding any.
+
 ## Branches
 
 One branch per work item, generated from the item id:
@@ -30,7 +47,7 @@ One branch per work item, generated from the item id:
 ### PR checklist
 
 - [ ] Linked work item from `tasks/` (or a clear docs-only / chore reason)
-- [ ] Tests pass locally (`npm test` or the project equivalent)
+- [ ] Tests pass locally (`uv run pytest` + `uv run ruff check .`)
 - [ ] Docs updated in the same PR when behavior changed
 - [ ] PR references the work item id
 
