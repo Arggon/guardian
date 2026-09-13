@@ -27,7 +27,7 @@ class Config:
     destination: Destination
 
 
-def load_config(path: Path) -> Config:
+def load_config(path: Path, *, require_sources_exist: bool = True) -> Config:
     """Lee un archivo TOML y devuelve la Config validada.
 
     Formato esperado::
@@ -38,6 +38,9 @@ def load_config(path: Path) -> Config:
         [destination]
         path = "/mnt/backup/guardian"
         keep_last = 5
+
+    Con ``require_sources_exist=False`` las carpetas origen no necesitan existir
+    (restore: el caso de uso es precisamente que el origen ya no esté).
     """
     try:
         raw = tomllib.loads(path.read_text(encoding="utf-8"))
@@ -56,7 +59,7 @@ def load_config(path: Path) -> Config:
         if not value:
             raise ConfigError(f"sources[{i}] no define 'path'")
         source = Path(value).expanduser().resolve()
-        if not source.is_dir():
+        if require_sources_exist and not source.is_dir():
             raise ConfigError(f"la carpeta origen no existe o no es un directorio: {source}")
         sources.append(source)
 

@@ -243,7 +243,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "restore":
         try:
-            config = load_config(args.config)
+            # restore no exige que los orígenes existan: su caso de uso es
+            # recuperarlos justamente cuando ya no están (bug-restore-enosource).
+            config = load_config(args.config, require_sources_exist=False)
         except ConfigError as exc:
             print(f"error de configuración: {exc}", file=sys.stderr)
             return 2
