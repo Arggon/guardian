@@ -19,3 +19,6 @@ Implementar la rotación simple decidida en docs/DECISIONS.md §3: ordenar direc
 ## Criterio de aceptación
 - Con keep_last=3 y 5 backups, quedan exactamente los 3 más nuevos con manifest.json.
 > imported from issue #3
+
+### 2026-09-13 @Arggon
+Implementado: PR #11 (story rotacion). El issue de GitHub se cerró con referencia al PR.
