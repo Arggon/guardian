@@ -30,6 +30,8 @@ ataca ese problema por diseño:
 uv sync                          # crea .venv e instala el proyecto
 uv run guardian backup --config guardian.toml --dry-run   # plan sin escribir nada
 uv run guardian backup --config guardian.toml             # backup real
+uv run guardian verify --config guardian.toml             # verifica el último backup contra su manifiesto
+uv run guardian verify --backup 20260913-143000           # verifica un backup puntual
 ```
 
 Configuración de ejemplo ([guardian.example.toml](guardian.example.toml)):
@@ -55,7 +57,7 @@ uv run ruff format .     # formato
 ## Estado y plan
 
 - [x] Esqueleto: config TOML, motor de copia con verificación, CLI `backup --dry-run`
-- [ ] Verificación independiente (`guardian verify`) — issue #2
+- [x] Verificación independiente (`guardian verify`) — issue #2
 - [ ] Rotación `keep-last-N` — issue #3
 - [ ] Restore — issue #4
 - [ ] Reporte por Telegram — issue #5

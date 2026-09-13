@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from . import __version__
@@ -129,7 +129,12 @@ def run_backup(config: Config, *, dry_run: bool = False, now: float | None = Non
         if not dry_run:
             target.mkdir(parents=True, exist_ok=True)
         try:
-            records = tuple(copy_tree(root, target, dry_run=dry_run))
+            # docs/FORMAT.md: destination es relativa a la RAÍZ del backup
+            # (<nombre-origen>/<path>), no al subdirectorio del origen.
+            records = tuple(
+                replace(r, destination=f"{root.name}/{r.destination}")
+                for r in copy_tree(root, target, dry_run=dry_run)
+            )
         except (HashMismatch, OSError) as exc:
             reports.append(
                 SourceReport(
