@@ -1,6 +1,6 @@
 ---
 type: story
-status: in_progress
+status: done
 id: restore
 title: "guardian restore: reconstrucción verificada desde un backup"
 assignee: arggonhuman
@@ -9,7 +9,6 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T20:38:19.651Z"
 depends_on: [verify]
 worktree_path: /home/arggon/Projects/guardian-restore
 ---

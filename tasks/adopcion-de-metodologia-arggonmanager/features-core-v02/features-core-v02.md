@@ -1,6 +1,6 @@
 ---
 type: epic
-status: todo
+status: done
 id: features-core-v02
 title: Features core v0.2
 parent: adopcion-de-metodologia-arggonmanager
