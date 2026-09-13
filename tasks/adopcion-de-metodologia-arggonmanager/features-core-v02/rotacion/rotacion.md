@@ -1,6 +1,6 @@
 ---
 type: story
-status: in_progress
+status: done
 id: rotacion
 title: Rotación keep-last-N de backups viejos
 assignee: Arggon
@@ -9,7 +9,6 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:31:35.157Z"
 depends_on: [verify]
 worktree_path: /home/arggon/Projects/guardian-rotacion
 ---
