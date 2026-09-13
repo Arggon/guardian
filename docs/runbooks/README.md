@@ -7,7 +7,12 @@ Operational runbooks for guardian: step-by-step procedures for incidents, mainte
 
 <!-- One bullet per runbook, most-used first. -->
 
-- <!-- runbook-name.md — when to use it -->
+- [emergency-restore.md](emergency-restore.md) — recuperar datos del último backup bueno cuando un origen se perdió o corrompió.
+- [disk-full.md](disk-full.md) — backup falla por ENOSPC en el destino: diagnosticar, liberar con rotación guiada y reanudar.
+- [partial-backup.md](partial-backup.md) — corrida terminó con orígenes fallidos (exit 4 planificado): leer el manifiesto, re-correr y tratar el directorio parcial.
+- [corrupt-rotation.md](corrupt-rotation.md) — backup viejo con manifiesto inválido o hashes en mismatch: qué borrar y qué nunca borrar.
+- [hash-false-green.md](hash-false-green.md) — sospecha de verificación SHA-256 que pasó con copia mal: auditar con manifiesto y sha256sum de sistema.
+- [expired-credentials.md](expired-credentials.md) — reporte por Telegram (issue #5) con token/chat_id inválidos: rotar credenciales sin tumbar el backup.
 
 ## Writing a runbook
 
