@@ -29,14 +29,20 @@ unlink de directorios elegidos.
 
 ## Acceptance
 
-- [ ] Con keep_last=3 y 5 backups con manifiesto quedan exactamente los 3 más nuevos.
-- [ ] Un directorio con patrón timestamp pero SIN manifest.json NO se borra (posible corrida en curso) y se reporta.
-- [ ] Directorios que no matchean `YYYYMMDD-HHMMSS` (p. ej. backup/ de arggon) se ignoran siempre.
-- [ ] `--keep N` overrideea config; N < 1 es error de config (exit 2).
-- [ ] Nunca borra el backup más nuevo, incluso si keep_last fuera 0→error.
-- [ ] Tests con tmp_path (crear 5 backups falsos con manifests) cubren cada regla.
+- [x] Con keep_last=3 y 5 backups con manifiesto quedan exactamente los 3 más nuevos.
+- [x] Un directorio con patrón timestamp pero SIN manifest.json NO se borra (posible corrida en curso) y se reporta.
+- [x] Directorios que no matchean `YYYYMMDD-HHMMSS` (p. ej. backup/ de arggon) se ignoran siempre.
+- [x] `--keep N` overrideea config; N < 1 es error de config (exit 2).
+- [x] Nunca borra el backup más nuevo, incluso si keep_last fuera 0→error.
+- [x] Tests con tmp_path (crear 5 backups falsos con manifests) cubren cada regla.
 
 ## Notes
 
 Depende de verify solo por el helper de detección de backup completo
 (manifiesto válido), no por el hash-walk completo.
+
+- Implementación (2026-09-13): `guardian/rotation.py` (`run_rotation`, `eligible_ids`)
+  + subcomando en `guardian/cli.py` con epílogo de exit codes (0 ok · 2 config, sin 3/4).
+  Detección de completo vía `read_manifest` (presencia + parseo, no hash-walk).
+  Conservador: manifiesto ausente o corrupto = skip, no elegible, no cuenta para
+  keep_last. Sin patrón: ignorado en silencio. Tests: tests/test_rotation.py (10).
