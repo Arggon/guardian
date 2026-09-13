@@ -10,6 +10,7 @@ from pathlib import Path
 from . import __version__
 from .backup import ManifestError, run_backup
 from .config import ConfigError, load_config
+from .rotation import RotationError, run_rotation
 from .status import collect_status
 from .verify import BackupNotFoundError, run_verify
 
@@ -30,6 +31,16 @@ exit codes de `guardian verify`:
   2  error de configuración o backup inexistente (o no hay completo para latest)
   3  falla de integridad: hash-mismatch, archivo faltante o manifiesto
      ausente/corrupto (backup incompleto)
+"""
+
+
+ROTATE_EPILOG = """\
+exit codes de `guardian rotate`:
+  0  ok (borró lo que correspondía, o nada que borrar)
+  2  error de configuración (TOML ausente/inválido o keep < 1)
+
+Los backups con manifiesto ausente o corrupto NUNCA se borran (posible
+corrida en curso): se reportan como skipped y no cuentan para keep_last.
 """
 
 
@@ -74,6 +85,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     status.add_argument("--config", "-c", type=Path, default=DEFAULT_CONFIG, help="ruta del TOML")
     status.add_argument("--json", action="store_true", help="salida JSON en stdout")
+
+    rotate = sub.add_parser(
+        "rotate",
+        help="borra los backups completos más viejos dejando keep_last",
+        epilog=ROTATE_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    rotate.add_argument("--config", "-c", type=Path, default=DEFAULT_CONFIG, help="ruta del TOML")
+    rotate.add_argument(
+        "--keep",
+        type=int,
+        default=None,
+        help="cuántos backups completos conservar (default: destination.keep_last)",
+    )
     return parser
 
 
@@ -166,6 +191,28 @@ def main(argv: list[str] | None = None) -> int:
             f"{len(result.missing)} faltante"
         )
         return result.exit_code
+
+    if args.command == "rotate":
+        try:
+            config = load_config(args.config)
+        except ConfigError as exc:
+            print(f"error de configuración: {exc}", file=sys.stderr)
+            return 2
+        keep = config.destination.keep_last if args.keep is None else args.keep
+        try:
+            result = run_rotation(config.destination.path, keep)
+        except RotationError as exc:
+            print(f"error de configuración: {exc}", file=sys.stderr)
+            return 2
+
+        dest = config.destination.path
+        print(f"guardian ROTATE {dest} (keep={keep})")
+        for backup_id in result.deleted:
+            print(f"  BORRADO   {backup_id}")
+        for backup_id, motivo in result.skipped:
+            print(f"  SKIP      {backup_id} — {motivo}")
+        print(f"quedan {len(result.kept)} backup(s) completo(s): {', '.join(result.kept) or '—'}")
+        return 0
 
     return 1
 
