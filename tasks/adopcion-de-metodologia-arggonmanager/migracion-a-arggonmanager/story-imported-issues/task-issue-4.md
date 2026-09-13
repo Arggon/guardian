@@ -23,3 +23,6 @@ Restaurar un backup verificado a una ruta de destino, usando el manifiesto como 
 
 ### 2026-09-13 @Arggon
 Implementado: PR #12 (story restore, post-steal de arggonhuman). El issue de GitHub se cerró con referencia al PR.
+
+### 2026-09-13 @Arggon
+Implementado: PR #12 (story restore, post-steal de arggonhuman). El issue de GitHub se cerró con referencia al PR. (Este item importado queda todo: el estado done vive en la story que lo implementó; saltar todo→done está prohibido por la convención.)
