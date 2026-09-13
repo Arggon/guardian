@@ -20,3 +20,6 @@ Restaurar un backup verificado a una ruta de destino, usando el manifiesto como 
 ## Criterio de aceptación
 - Backup → borrar origen → restore → diff -r sin diferencias.
 > imported from issue #4
+
+### 2026-09-13 @Arggon
+Implementado: PR #12 (story restore, post-steal de arggonhuman). El issue de GitHub se cerró con referencia al PR.
