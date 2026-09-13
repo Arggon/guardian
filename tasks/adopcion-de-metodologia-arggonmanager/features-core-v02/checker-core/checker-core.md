@@ -28,12 +28,28 @@ sin abortar los orígenes sanos, y el fix de reporte de errores por origen.
 
 ## Acceptance
 
-- [ ] `guardian backup` con un origen fallido termina con exit 4 y reporta qué origen falló.
-- [ ] Los orígenes sanos de esa misma corrida quedan copiados y verificados en el manifiesto.
-- [ ] Exit 0 cuando todos los orígenes están ok; 2 config; 3 integridad (comportamiento previo intacto).
-- [ ] Tests en tests/test_backup.py cubren los tres estados con tmp_path (sin FS real).
+- [x] `guardian backup` con un origen fallido termina con exit 4 y reporta qué origen falló.
+- [x] Los orígenes sanos de esa misma corrida quedan copiados y verificados en el manifiesto.
+- [x] Exit 0 cuando todos los orígenes están ok; 2 config; 3 integridad (comportamiento previo intacto).
+- [x] Tests en tests/test_backup.py cubren los tres estados con tmp_path (sin FS real).
 
 ## Notes
 
 Referencia: issue GitHub #1. Fix de bug-issue-6 (colisión de basenames) NO entra
 en esta story: va como fix separado (un PR por item).
+
+## Notes
+
+- 2026-09-13 (implementación): `run_backup` ya no aborta ante un origen fallido
+  (HashMismatch/OSError): cada origen produce un `SourceReport` con `status`
+  ok/failed y `error` ("Tipo: mensaje"), volcado al manifiesto (`sources[i].status`
+  y `sources[i].error` — docs/FORMAT.md actualizado en el mismo PR). Exit codes:
+  0 todos ok · 2 config (igual que antes) · 3 integridad total (todos los orígenes
+  HashMismatch; v0.1 un solo origen mantiene el comportamiento) · 4 corrida parcial.
+  Tabla de exit codes documentada en el epílogo de `guardian backup --help` y en
+  docs/FORMAT.md. Invariantes intactos: dry-run no escribe nada (con o sin fallos),
+  nunca se pisan backups previos, SHA-256 doble origen+copia. Fallback de CLI por
+  HashMismatch fuera del flujo de run_backup fue removido (run_backup ya no lanza).
+  Suite: 27 passed, ruff limpio, arggon validate ok. Corrida parcial queda como
+  manifiesto válido con entradas `failed` — verify/rotate/restore (issues #2-#4)
+  decidirán cómo tratarlas.
