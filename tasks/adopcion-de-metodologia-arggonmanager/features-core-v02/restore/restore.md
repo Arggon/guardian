@@ -28,11 +28,11 @@ desde un backup, re-verificando cada archivo contra el manifiesto.
 
 ## Acceptance
 
-- [ ] Backup → borrar origen → restore → `diff -r` sin diferencias.
-- [ ] Cada archivo restaurado se re-verifica contra el manifiesto; mismatch → exit 3 y archivo reportado.
-- [ ] `--dest` existente y no vacío sin `--overwrite` → exit 2 con mensaje claro.
-- [ ] `latest` resuelve igual que en verify.
-- [ ] Tests con tmp_path cubren restore limpio, mismatch y protección de destino no vacío.
+- [x] Backup → borrar origen → restore → `diff -r` sin diferencias.
+- [x] Cada archivo restaurado se re-verifica contra el manifiesto; mismatch → exit 3 y archivo reportado.
+- [x] `--dest` existente y no vacío sin `--overwrite` → exit 2 con mensaje claro.
+- [x] `latest` resuelve igual que en verify.
+- [x] Tests con tmp_path cubren restore limpio, mismatch y protección de destino no vacío.
 
 ## Notes
 
@@ -52,3 +52,17 @@ HALLAZGOS DEL EXPERIMENTO (coordinador):
 
 PARA EL HUMANO: decidir --steal (desde este worktree) o descartar el branch. El árbol tiene trabajo WIP no commiteado a propósito (simulación de agente muerto).
 > stolen 2026-09-13 by arggonhuman: tomo el restore abandonado por el test de caos
+
+### 2026-09-13 @arggonhuman (implementado por el agente coordinador, por encargo)
+Implementación completada tras el steal humano (mismo worktree, branch feat/restore):
+- guardian/restore.py final: `run_restore` reutiliza `verify.resolve_backup` (id|latest,
+  solo backups completos), re-verifica SHA-256 de cada archivo del backup contra el
+  manifiesto ANTES de copiar (un corrupto jamás llega al destino), recrea
+  `dest/<nombre-origen>/<ruta-relativa>`, y protege el destino no vacío sin
+  `--overwrite` (`DestNotEmptyError`). Backup origen: pure read (test de snapshot).
+- CLI: `guardian restore <backup> --dest <ruta> [--overwrite]` con epílogo de exit
+  codes (0 ok · 2 backup inexistente/destino no vacío/config · 3 integridad).
+- tests/test_restore.py: 10 tests (roundtrip, latest, overwrite, mismatch, missing,
+  manifiesto ausente, pure read, dest inexistente). Suite: 71 passed + ruff limpio.
+- Docs: README (uso + roadmap), ARCHITECTURE.md (code map), CHANGELOG; spec/plan
+  flip a `implemented` (T4 cierra el pipeline).
