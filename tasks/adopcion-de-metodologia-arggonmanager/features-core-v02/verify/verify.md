@@ -55,3 +55,6 @@ manifest.json (formato docs/FORMAT.md). Pure read: nunca escribe.
   después de verify. 17 tests nuevos en tests/test_verify.py; suite 44 verde +
   ruff limpio. Docs actualizadas en el mismo PR: FORMAT.md (exit codes de
   verify), README, ARCHITECTURE, CHANGELOG.
+
+### 2026-09-13 @Arggon
+implementación en PR https://github.com/Arggon/guardian/pull/10: módulo guardian/verify.py + subcomando en cli; latest = timestamp más alto con manifest.json (incompletos ignorados, sin completos → exit 2); id sin manifiesto → exit 3 'incompleto' (nunca traceback); pure read verificado por snapshot byte a byte del destino. Fix a checker-core: destination del manifiesto ahora relativo a la raíz del backup como exige docs/FORMAT.md. Resultados: 44 passed (17 nuevos), ruff limpio, arggon validate ok:true. Head: 24ae2ca.
