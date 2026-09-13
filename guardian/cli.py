@@ -1,14 +1,16 @@
-"""CLI de guardian: ``guardian backup [--dry-run]``."""
+"""CLI de guardian: ``guardian backup [--dry-run]``, ``guardian status``."""
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 from . import __version__
 from .backup import run_backup
 from .config import ConfigError, load_config
+from .status import collect_status
 
 DEFAULT_CONFIG = Path("guardian.toml")
 
@@ -42,11 +44,50 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="muestra el plan (archivos y hashes) sin escribir nada en disco",
     )
+
+    status = sub.add_parser(
+        "status",
+        help="lista los backups del destino (lectura pura)",
+    )
+    status.add_argument("--config", "-c", type=Path, default=DEFAULT_CONFIG, help="ruta del TOML")
+    status.add_argument("--json", action="store_true", help="salida JSON en stdout")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+
+    if args.command == "status":
+        try:
+            config = load_config(args.config)
+        except ConfigError as exc:
+            print(f"error de configuración: {exc}", file=sys.stderr)
+            return 2
+        backups = collect_status(config.destination.path)
+        if args.json:
+            payload = {
+                "backups": [
+                    {
+                        "id": b.id,
+                        "created_at": b.created_at,
+                        "files": b.files,
+                        "bytes": b.bytes,
+                        "complete": b.complete,
+                    }
+                    for b in backups
+                ]
+            }
+            print(json.dumps(payload, indent=2))
+            return 0
+        if not backups:
+            print(f"sin backups en {config.destination.path}")
+            return 0
+        print(f"backups en {config.destination.path}: {len(backups)}")
+        for b in backups:
+            mark = "ok" if b.complete else "incompleto"
+            created = b.created_at if b.created_at else "—"
+            print(f"  {b.id}  {created}  {b.files} archivo(s)  {b.bytes} B  [{mark}]")
+        return 0
 
     if args.command == "backup":
         try:
