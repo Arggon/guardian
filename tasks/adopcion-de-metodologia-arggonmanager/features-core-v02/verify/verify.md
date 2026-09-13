@@ -1,6 +1,6 @@
 ---
 type: story
-status: in_progress
+status: done
 id: verify
 title: "guardian verify: verificación de integridad de backups contra manifiesto"
 assignee: Arggon
@@ -9,7 +9,6 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:17:09.467Z"
 depends_on: [checker-core]
 worktree_path: /home/arggon/Projects/guardian-verify
 ---
