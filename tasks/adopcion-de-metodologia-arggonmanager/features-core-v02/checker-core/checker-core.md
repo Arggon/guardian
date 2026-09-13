@@ -1,6 +1,6 @@
 ---
 type: story
-status: in_progress
+status: done
 id: checker-core
 title: "Checker core: corrida supervisable con resumen por origen y exit codes"
 assignee: Arggon
@@ -9,7 +9,6 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:08:40.750Z"
 worktree_path: /home/arggon/Projects/guardian-checker-core
 ---
 <!--
