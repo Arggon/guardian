@@ -1,13 +1,17 @@
 ---
 type: story
-status: todo
+status: in_progress
 id: restore
 title: "guardian restore: reconstrucción verificada desde un backup"
+assignee: Arggon
+branch: feat/restore
 parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
+claimed_at: "2026-09-13T18:12:24.609Z"
 depends_on: [verify]
+worktree_path: /home/arggon/Projects/guardian-restore
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/restore/restore.md (story index; required).
