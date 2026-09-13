@@ -5,9 +5,7 @@ Instructions for humans and AI agents working on **guardian**. Read this file be
 
 ## What this project is
 
-<!-- Describe the project in one or two sentences: what it does, for whom, and its core constraint. -->
-
-guardian — <!-- TODO: one-sentence project description -->.
+guardian — automatizador de backups personales para una sola máquina: copia carpetas locales a un destino en disco verificando SHA-256 por archivo (origen y copia), rota por keep-last-N y notifica el resultado; corre sin daemon y sin dependencias de runtime fuera de la stdlib de Python 3.13 (ver `docs/DECISIONS.md`).
 
 ## Task workflow
 

@@ -29,10 +29,15 @@ A change is acceptable when it satisfies the bar above and a reviewer can answer
 
 ## Testing expectations
 
-<!-- Project-specific: coverage expectations, what needs integration vs unit tests, fixtures policy. -->
-
-- TODO: unit vs integration split.
-- TODO: what must be covered before merge.
+- **Split:** unit tests por módulo (`tests/test_config.py`, `test_copier.py`,
+  `test_backup.py`); no hay tests de integración externos — todo corre contra
+  `tmp_path` de pytest, sin red ni disco real. Los flujos end-to-end (backup →
+  verificar → rotar → restaurar) se cubren como unit tests de `backup.py` + CLI.
+- **Cobertura mínima antes de merge:** todo cambio de comportamiento trae tests
+  (regla general); los invariantes de `ARCHITECTURE.md` (dry-run no escribe,
+  HashMismatch descarta la copia, manifiesto ausente = backup incompleto) deben
+  mantener su test dedicado en verde. `uv run pytest` + `uv run ruff check .`
+  en verde es la puerta de merge completa.
 
 ## ADRs
 
