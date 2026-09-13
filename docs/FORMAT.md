@@ -21,6 +21,7 @@ es la única fuente de verdad para verificar, restaurar o auditar un backup.
   "sources": [
     {
       "root": "/home/arggon/Documents",
+      "status": "ok",
       "files": [
         {
           "path": "facturas/2026/f026.pdf",
@@ -51,7 +52,14 @@ es la única fuente de verdad para verificar, restaurar o auditar un backup.
 | Campo | Tipo | Descripción |
 | --- | --- | --- |
 | `root` | string | Ruta absoluta de la carpeta origen configurada. |
-| `files` | array | Archivos copiados, ordenados lexicográficamente por `path`. |
+| `status` | string | `"ok"` si la carpeta se copió y verificó completa; `"failed"` si falló. |
+| `error` | string | Solo cuando `status` es `"failed"`: causa en formato `Tipo: mensaje` (`HashMismatch: …`, `OSError: …`). |
+| `files` | array | Archivos copiados, ordenados lexicográficamente por `path`. Vacío en una entrada `failed`. |
+
+Un manifiesto con al menos una entrada `failed` corresponde a un **backup
+parcial**: la corrida termina con exit 4 (o 3 si TODOS los orígenes fallaron
+con `HashMismatch`). Un origen fallido no aborta a los demás: los orígenes
+sanos quedan con `status: "ok"` y sus `files` completos.
 
 ### `sources[i].files[j]`
 
@@ -70,3 +78,26 @@ es la única fuente de verdad para verificar, restaurar o auditar un backup.
 3. Los `sha256` del manifiesto corresponden al archivo del **origen** al momento del
    backup; `guardian verify` (issue #2) recomputa sobre la copia y compara.
 4. El manifiesto nunca se reescribe después de terminada la corrida.
+
+## Exit codes de `guardian backup`
+
+| Código | Significado |
+| --- | --- |
+| `0` | Todos los orígenes copiados y verificados (ok). |
+| `2` | Error de configuración (TOML ausente, inválido o fuentes inexistentes). |
+| `3` | Falla de integridad total: todos los orígenes fallaron con `HashMismatch` (v0.1: un solo origen con hash mismatch). |
+| `4` | Corrida parcial: al menos un origen ok y al menos uno fallido. |
+
+La misma tabla está documentada en `guardian backup --help` (epílogo).
+
+## Exit codes de `guardian verify`
+
+| Código | Significado |
+| --- | --- |
+| `0` | Todos los archivos del manifiesto coinciden con su SHA-256 (ok). |
+| `2` | Error de configuración, o backup inexistente, o no hay backups completos para `--backup latest`. |
+| `3` | Falla de integridad: hash-mismatch, archivo faltante, o manifiesto ausente/corrupto (backup incompleto). |
+
+`verify` es **pure read**: nunca crea, modifica ni borra nada en el destino.
+`--backup latest` resuelve al directorio con timestamp más alto que tenga
+`manifest.json` (los incompletos se ignoran para `latest`).

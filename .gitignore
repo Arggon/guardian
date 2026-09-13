@@ -9,3 +9,4 @@ build/
 backups/
 guardian.toml
 .evidence/
+backup/
