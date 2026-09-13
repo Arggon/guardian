@@ -2,7 +2,7 @@
 plan_id: backup-pipeline-v2-001
 title: Plan for Pipeline de backup v0.2: checker core, verify, rotación, restore y status
 spec: docs/specs/spec-backup-pipeline-v2-001.md
-status: proposed
+status: implemented
 created: 2026-09-13
 ---
 
@@ -61,8 +61,6 @@ marcan `implemented` en el PR de la última story que aterriza.
 
 - T1 checker-core ✅ (PR #7) · T2 verify ✅ (PR #10) · T5 status-report ✅ (PR #9,
   MCP-first) · T3 rotacion ✅ (PR #11).
-- T4 restore ⏸ **queda abierto a propósito** (test de caos del tracker: la story
-  `restore` quedó in_progress/stale con handoff, esperando `--steal` humano —
-  ver comentario en la task). Por T4 pendiente, el spec y este plan permanecen
-  en `proposed`: pasarlos a `implemented` sería deshonesto con la checklist del
-  spec. Cuando un humano robe y termine `restore`, flip de estado en ese PR.
+- T4 restore ✅ (PR de cierre): robada vía `--steal` por **arggonhuman**
+  (2026-09-13, tras el test de caos) e implementada por el agente coordinador
+  por encargo del humano. Con T4 aterrizado, spec y plan pasan a `implemented`.

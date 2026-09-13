@@ -1,4 +1,4 @@
-"""CLI de guardian: ``backup [--dry-run]``, ``verify``, ``status``."""
+"""CLI de guardian: ``backup [--dry-run]``, ``verify``, ``rotate``, ``status``, ``restore``."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from pathlib import Path
 from . import __version__
 from .backup import ManifestError, run_backup
 from .config import ConfigError, load_config
+from .restore import DestNotEmptyError, RestoreError, run_restore
 from .rotation import RotationError, run_rotation
 from .status import collect_status
 from .verify import BackupNotFoundError, run_verify
@@ -41,6 +42,15 @@ exit codes de `guardian rotate`:
 
 Los backups con manifiesto ausente o corrupto NUNCA se borran (posible
 corrida en curso): se reportan como skipped y no cuentan para keep_last.
+"""
+
+
+RESTORE_EPILOG = """\
+exit codes de `guardian restore`:
+  0  archivos restaurados y verificados contra el manifiesto (ok)
+  2  backup inexistente, destino no vacío sin --overwrite, o error de config
+  3  falla de integridad: hash-mismatch, archivo faltante o manifiesto
+     ausente/corrupto (backup incompleto)
 """
 
 
@@ -98,6 +108,23 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=None,
         help="cuántos backups completos conservar (default: destination.keep_last)",
+    )
+
+    restore = sub.add_parser(
+        "restore",
+        help="reconstruye los orígenes desde un backup verificado",
+        epilog=RESTORE_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    restore.add_argument("backup", help="id del backup (YYYYMMDD-HHMMSS) o 'latest'")
+    restore.add_argument(
+        "--dest", "-d", type=Path, required=True, help="ruta destino de la restauración"
+    )
+    restore.add_argument("--config", "-c", type=Path, default=DEFAULT_CONFIG, help="ruta del TOML")
+    restore.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="permitir restaurar sobre un --dest existente no vacío",
     )
     return parser
 
@@ -212,6 +239,31 @@ def main(argv: list[str] | None = None) -> int:
         for backup_id, motivo in result.skipped:
             print(f"  SKIP      {backup_id} — {motivo}")
         print(f"quedan {len(result.kept)} backup(s) completo(s): {', '.join(result.kept) or '—'}")
+        return 0
+
+    if args.command == "restore":
+        try:
+            config = load_config(args.config)
+        except ConfigError as exc:
+            print(f"error de configuración: {exc}", file=sys.stderr)
+            return 2
+        try:
+            result = run_restore(config, args.backup, args.dest, overwrite=args.overwrite)
+        except BackupNotFoundError as exc:
+            print(f"backup inexistente: {exc}", file=sys.stderr)
+            return 2
+        except DestNotEmptyError as exc:
+            print(f"destino no vacío: {exc}", file=sys.stderr)
+            return 2
+        except ManifestError as exc:
+            print(f"backup incompleto: {exc}", file=sys.stderr)
+            return 3
+        except RestoreError as exc:
+            print(f"error de integridad: {exc}", file=sys.stderr)
+            return 3
+
+        print(f"guardian RESTORE {result.backup_dir.name} -> {result.dest}")
+        print(f"{result.files} archivo(s) restaurado(s) y verificados ({result.bytes} B)")
         return 0
 
     return 1
