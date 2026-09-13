@@ -25,6 +25,15 @@ worktree_path: /home/arggon/Projects/guardian-runbooks
 
 ## Acceptance
 
-- [ ] 
+- [x] emergency-restore.md
+- [x] corrupt-rotation.md
+- [x] disk-full.md
+- [x] expired-credentials.md
+- [x] partial-backup.md
+- [x] hash-false-green.md
 
 ## Notes
+
+- 2026-09-13: los 6 runbooks escritos en docs/runbooks/ con estructura Trigger → Diagnosis → Mitigation → Escalation → Rollback, comandos reales del proyecto (uv run guardian backup, manifest.json, sha256sum, du/df) y citas a invariantes de FORMAT.md/ARCHITECTURE.md.
+- Los subcomandos no implementados (verify #2, rotate #3, notificación #5, exit 4 de partial) se referencian como comandos planificados con la alternativa manual de hoy entre paréntesis.
+- Índice actualizado en docs/runbooks/README.md (un bullet por runbook).
