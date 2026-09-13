@@ -62,3 +62,15 @@ docs/mcp-capabilities.md.
 - Conclusión: la mitad tracker (leer grafo, crear, actualizar frontmatter,
   comentar) tiene paridad total por MCP; falta cobertura para todo lo que
   toca git/gh/documentos.
+
+### 2026-09-13 @Arggon
+Handoff MCP-first — implementación completa.
+
+QUÉ: `guardian status [--config] [--json]` (lectura pura del destino): lista dirs YYYYMMDD-HHMMSS con id, created_at del manifiesto, archivos, bytes y `complete` (manifiesto presente y parseable; sin manifiesto cuenta en disco y marca incompleto). Exit 0 ok / 2 config. Archivos: guardian/status.py, guardian/cli.py, tests/test_status.py (tmp_path + snapshot pure-read). Helper MCP: tools/mcp_client.py. Doc: docs/mcp-capabilities.md.
+
+PR: https://github.com/Arggon/guardian/pull/9 (head af4c8b5, branch feat/status-report). pytest 34 passed, ruff limpio, arggon validate --json ok. Acceptance marcada en el body (editado a mano: el body NO es editable por MCP).
+
+3 hallazgos del experimento MCP:
+1. Paridad total de lectura/escritura de tracker por MCP (arggon_list con filtros, arggon_update de frontmatter — labels probado y revertido—, arggon_comment de este handoff); pero NO hay arggon_get ni next --ready: leer un item puntual o sugerir claimable requiere traer la lista completa y razonar en el cliente.
+2. El claim con `start --worktree` (branch+worktree+push) NO es posible por MCP (ausente en tools/list): el claim de esta story lo tomó el coordinador con CLI. Igual que validate, spec/plan, board, report --trend, sync, import-issues, adopt y cleanup.
+3. El body del item no es editable por MCP (arggon_update solo toca frontmatter): los checkboxes de Acceptance solo se marcan editando el archivo y commiteando; arggon_comment agrega pero no modifica.
