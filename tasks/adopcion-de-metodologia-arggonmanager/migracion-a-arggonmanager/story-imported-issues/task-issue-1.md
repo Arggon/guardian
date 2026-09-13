@@ -21,3 +21,6 @@ Convertir el motor de copia actual (`guardian/copier.py` + `guardian/backup.py`)
 - `guardian backup` sobre 2 orígenes con uno corrupto termina con exit 4 y reporta el origen fallido.
 - Suite pytest cubre los tres estados.
 > imported from issue #1
+
+### 2026-09-13 @Arggon
+Implementado: PR #7 (story checker-core). El issue de GitHub se cerró con referencia al PR.
