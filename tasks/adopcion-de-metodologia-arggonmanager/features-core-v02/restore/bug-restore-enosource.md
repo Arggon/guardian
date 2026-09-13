@@ -21,6 +21,11 @@ worktree_path: /home/arggon/Projects/guardian-bug-restore-enosource
 
 # restore falla cuando la carpeta origen ya no existe: load_config exige fuentes existentes
 
+## Acceptance
+
+- [x] Backup → borrar origen → `guardian restore` funciona y reconstruye el árbol (test de regresión `test_restore_works_after_source_deleted`).
+- [x] backup/verify/status/rotate siguen exigiendo fuentes existentes (comportamiento intacto, 72 tests).
+
 ## Context
 
 <!-- What went wrong / how to reproduce. -->
@@ -30,3 +35,11 @@ worktree_path: /home/arggon/Projects/guardian-bug-restore-enosource
 - [ ] 
 
 ## Notes
+
+
+## Notes
+
+Causa raíz: `load_config` valida `is_dir()` de cada fuente; restore solo usa
+`[destination]`. Fix: `load_config(..., require_sources_exist=False)` que solo el
+subcomando restore usa. Detectado por la demo end-to-end post-merge de PR #12
+(backup → rm origen → restore → exit 2 inesperado).
