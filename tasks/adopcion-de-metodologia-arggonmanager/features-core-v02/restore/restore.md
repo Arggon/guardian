@@ -9,7 +9,7 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:12:24.609Z"
+claimed_at: "2026-09-13T18:21:18.621Z"
 depends_on: [verify]
 worktree_path: /home/arggon/Projects/guardian-restore
 ---
@@ -37,3 +37,17 @@ desde un backup, re-verificando cada archivo contra el manifiesto.
 ## Notes
 
 Depende de verify: reutiliza sus helpers de verificación hash-manifiesto.
+> stolen 2026-09-13 by Arggon: chaos test: agente intenta robar el claim propio abandonado
+
+### 2026-09-13 @Arggon
+HANDOFF (test de caos — agente abandonó a mitad de implementación):
+
+QUÉ ENCONTRARÁS EN EL WORKTREE (feat/restore, sin commitear):
+- guardian/restore.py WIP ~50%: restore_backup() copia y re-verifica SHA-256 contra el manifiesto; RestoreError/RestoreHashMismatch definidos; resolve_backup_dir() solo resuelve ids explícitos.
+- FALTA: protección de --dest no vacío sin --overwrite, resolución de 'latest', wiring del subcomando en cli.py, tests/test_restore.py, actualización de README/docs.
+
+HALLAZGOS DEL EXPERIMENTO (coordinador):
+1. El claim vive SOLO en este branch: desde main la task se ve todo/claimed_at null (start.ts:431-448 commitea el claim en el worktree) → list --stale desde main es ciego a este abandono; hay que correrlo desde el worktree.
+2. update --steal por CLI NO fue negado al agente (ok:true, claimed_at refrescado 18:21:18Z): el CLI nunca pasa agent:true (cli.ts/update.ts; solo mcp-server.ts:289 lo hace). Vía MCP el schema de arggon_update ni siquiera expone steal → la regla human-only del skill solo se aplica (parcialmente) por MCP.
+
+PARA EL HUMANO: decidir --steal (desde este worktree) o descartar el branch. El árbol tiene trabajo WIP no commiteado a propósito (simulación de agente muerto).
