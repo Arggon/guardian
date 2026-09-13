@@ -53,3 +53,6 @@ en esta story: va como fix separado (un PR por item).
   Suite: 27 passed, ruff limpio, arggon validate ok. Corrida parcial queda como
   manifiesto válido con entradas `failed` — verify/rotate/restore (issues #2-#4)
   decidirán cómo tratarlas.
+
+### 2026-09-13 @Arggon
+implementación completa en PR https://github.com/Arggon/guardian/pull/7: run_backup ya no aborta por origen fallido (SourceReport con status ok/failed + error 'Tipo: mensaje' volcado al manifiesto); exit codes 0/2/3/4 (3 = todos los orígenes HashMismatch, v0.1 un solo origen igual que antes; 4 = parcial) documentados en epílogo de backup --help y docs/FORMAT.md (mismo commit). Invariantes intactos (dry-run no escribe, no pisa backups, SHA-256 doble). 6 tests nuevos con monkeypatch de hash_file; suite 27 passed, ruff limpio, validate ok:true.
