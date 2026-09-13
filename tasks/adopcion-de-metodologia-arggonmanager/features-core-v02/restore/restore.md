@@ -3,13 +3,13 @@ type: story
 status: in_progress
 id: restore
 title: "guardian restore: reconstrucción verificada desde un backup"
-assignee: Arggon
+assignee: arggonhuman
 branch: feat/restore
 parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-claimed_at: "2026-09-13T18:21:18.621Z"
+claimed_at: "2026-09-13T20:38:19.651Z"
 depends_on: [verify]
 worktree_path: /home/arggon/Projects/guardian-restore
 ---
@@ -51,3 +51,4 @@ HALLAZGOS DEL EXPERIMENTO (coordinador):
 2. update --steal por CLI NO fue negado al agente (ok:true, claimed_at refrescado 18:21:18Z): el CLI nunca pasa agent:true (cli.ts/update.ts; solo mcp-server.ts:289 lo hace). Vía MCP el schema de arggon_update ni siquiera expone steal → la regla human-only del skill solo se aplica (parcialmente) por MCP.
 
 PARA EL HUMANO: decidir --steal (desde este worktree) o descartar el branch. El árbol tiene trabajo WIP no commiteado a propósito (simulación de agente muerto).
+> stolen 2026-09-13 by arggonhuman: tomo el restore abandonado por el test de caos
