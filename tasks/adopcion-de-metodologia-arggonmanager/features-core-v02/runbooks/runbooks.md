@@ -9,7 +9,7 @@ parent: features-core-v02
 labels: []
 created: "2026-09-13"
 updated: "2026-09-13"
-worktree_path: /home/arggon/Projects/guardian-runbooks
+worktree_path: null
 ---
 <!--
   Placement (v0): tasks/adopcion-de-metodologia-arggonmanager/features-core-v02/runbooks/runbooks.md (story index; required).
