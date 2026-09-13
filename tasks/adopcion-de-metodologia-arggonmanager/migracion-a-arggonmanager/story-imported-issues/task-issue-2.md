@@ -20,3 +20,6 @@ issue: 2
 ## Criterio de aceptación
 - Corromper un byte de un archivo respaldeado y verificar que `guardian verify` lo detecta con exit 3.
 > imported from issue #2
+
+### 2026-09-13 @Arggon
+Implementado: PR #10 (story verify). El issue de GitHub se cerró con referencia al PR.
