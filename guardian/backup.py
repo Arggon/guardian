@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import Config
-from .copier import FileRecord, copy_tree
+from .copier import FileRecord, HashMismatch, copy_tree
 
 
 class ManifestError(RuntimeError):
@@ -18,8 +18,19 @@ class ManifestError(RuntimeError):
 
 @dataclass(frozen=True)
 class SourceReport:
+    """Resultado de respaldar una carpeta origen: ok o fallido con causa."""
+
     root: Path
     records: tuple[FileRecord, ...]
+    status: str = "ok"  # "ok" | "failed"
+    error: str | None = None  # "Tipo: mensaje" cuando status == "failed"
+
+    @property
+    def error_kind(self) -> str | None:
+        """Clase de la causa del error (``HashMismatch``, ``OSError``, ...)."""
+        if self.error is None:
+            return None
+        return self.error.split(":", 1)[0]
 
 
 @dataclass(frozen=True)
@@ -31,6 +42,18 @@ class BackupResult:
     @property
     def records(self) -> tuple[FileRecord, ...]:
         return tuple(r for report in self.sources for r in report.records)
+
+    @property
+    def exit_code(self) -> int:
+        """0 todo ok · 3 integridad total · 4 corrida parcial (ver docs/FORMAT.md)."""
+        failed = [s for s in self.sources if s.status == "failed"]
+        if not failed:
+            return 0
+        if len(failed) == len(self.sources) and all(
+            s.error_kind == HashMismatch.__name__ for s in failed
+        ):
+            return 3
+        return 4
 
 
 def backup_timestamp(now: float | None = None) -> str:
@@ -69,6 +92,8 @@ def build_manifest(
         "sources": [
             {
                 "root": str(report.root),
+                "status": report.status,
+                **({"error": report.error} if report.error is not None else {}),
                 "files": [
                     {
                         "path": r.source,
@@ -91,6 +116,11 @@ def run_backup(config: Config, *, dry_run: bool = False, now: float | None = Non
     subdirectorio por carpeta origen (nombrado con el basename del origen).
     Nunca toca backups anteriores; la rotación es responsabilidad del
     módulo de rotación.
+
+    Un origen fallido (HashMismatch, OSError de FS/permisos, ...) NO aborta
+    la corrida: queda marcado ``status="failed"`` con su causa en el reporte
+    y en el manifiesto, y los orígenes sanos se copian igual. El exit code
+    de la corrida lo calcula ``BackupResult.exit_code``.
     """
     backup_dir = config.destination.path / backup_timestamp(now)
     reports: list[SourceReport] = []
@@ -98,8 +128,19 @@ def run_backup(config: Config, *, dry_run: bool = False, now: float | None = Non
         target = backup_dir / root.name
         if not dry_run:
             target.mkdir(parents=True, exist_ok=True)
-        records = copy_tree(root, target, dry_run=dry_run)
-        reports.append(SourceReport(root=root, records=tuple(records)))
+        try:
+            records = tuple(copy_tree(root, target, dry_run=dry_run))
+        except (HashMismatch, OSError) as exc:
+            reports.append(
+                SourceReport(
+                    root=root,
+                    records=(),
+                    status="failed",
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+            )
+            continue
+        reports.append(SourceReport(root=root, records=records, status="ok"))
     if not dry_run:
         manifest = build_manifest(backup_dir, config, reports, dry_run=False)
         text = json.dumps(manifest, indent=2) + "\n"
