@@ -40,19 +40,20 @@ guardian.toml ──► config.load_config() ──► Config (sources[], destin
                               cli.main() ──► stdout (plan o resumen) + exit code
 ```
 
-Los módulos dependen solo hacia abajo: `cli` → `backup` → (`config`, `copier`).
-El próximo módulo planificado (rotación, issue #3) se apoya en `backup` (lee
-timestamps + manifiestos) y es llamado desde `cli`.
+Los módulos dependen solo hacia abajo: `cli` → (`backup`, `verify`) →
+(`config`, `copier`). El próximo módulo planificado (rotación, issue #3) se apoya en
+`backup` (lee timestamps + manifiestos) y es llamado desde `cli`.
 
 ## Code map
 
 ```text
 guardian/
   guardian/            # el paquete (mismo nombre que el repo, sin src/: es un CLI chico)
-    cli.py             # argparse: guardian backup [--dry-run]; SOLO parseo y salida
+    cli.py             # argparse: guardian backup [--dry-run] / verify; SOLO parseo y salida
     config.py          # TOML → Config validada (tomllib); errores = ConfigError
     copier.py          # motor de copia: shutil.copy2 + SHA-256 doble + FileRecord
     backup.py          # orquestación: timestamp, corrida por origen, manifest.json
+    verify.py          # verificación de un backup contra su manifiesto (pure read)
   tests/               # pytest, una suite por módulo, tmp_path para FS efímero
   docs/                # DECISIONS.md, FORMAT.md + los docs de gestión (arggon)
   tasks/               # work items Markdown gestionados por arggon (fuente de verdad)

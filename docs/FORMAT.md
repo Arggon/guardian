@@ -89,3 +89,15 @@ sanos quedan con `status: "ok"` y sus `files` completos.
 | `4` | Corrida parcial: al menos un origen ok y al menos uno fallido. |
 
 La misma tabla está documentada en `guardian backup --help` (epílogo).
+
+## Exit codes de `guardian verify`
+
+| Código | Significado |
+| --- | --- |
+| `0` | Todos los archivos del manifiesto coinciden con su SHA-256 (ok). |
+| `2` | Error de configuración, o backup inexistente, o no hay backups completos para `--backup latest`. |
+| `3` | Falla de integridad: hash-mismatch, archivo faltante, o manifiesto ausente/corrupto (backup incompleto). |
+
+`verify` es **pure read**: nunca crea, modifica ni borra nada en el destino.
+`--backup latest` resuelve al directorio con timestamp más alto que tenga
+`manifest.json` (los incompletos se ignoran para `latest`).
