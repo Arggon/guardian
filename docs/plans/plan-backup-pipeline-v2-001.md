@@ -56,3 +56,13 @@ T5 (status-report, MCP-first)
 T2/T5 paralelizables (ambas solo dependen de T1); T3/T4 paralelizables entre sí
 tras T2. Cada story = un branch/PR que referencia el id; el spec y este plan se
 marcan `implemented` en el PR de la última story que aterriza.
+
+## Estado de implementación (2026-09-13)
+
+- T1 checker-core ✅ (PR #7) · T2 verify ✅ (PR #10) · T5 status-report ✅ (PR #9,
+  MCP-first) · T3 rotacion ✅ (PR #11).
+- T4 restore ⏸ **queda abierto a propósito** (test de caos del tracker: la story
+  `restore` quedó in_progress/stale con handoff, esperando `--steal` humano —
+  ver comentario en la task). Por T4 pendiente, el spec y este plan permanecen
+  en `proposed`: pasarlos a `implemented` sería deshonesto con la checklist del
+  spec. Cuando un humano robe y termine `restore`, flip de estado en ese PR.
