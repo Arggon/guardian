@@ -1,9 +1,6 @@
 <!-- arggon:generated template="SECURITY.md" -->
 # Security Policy
 
-<!-- arggon:PENDING-HUMAN-REVIEW: la dirección de contacto y la tabla de versiones
-     deben ser confirmadas por el maintainer humano antes de darlas por definitivas. -->
-
 ## Supported versions
 
 | Version | Supported |
