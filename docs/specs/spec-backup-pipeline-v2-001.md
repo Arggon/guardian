@@ -1,7 +1,7 @@
 ---
 spec_id: backup-pipeline-v2-001
 title: Pipeline de backup v0.2: checker core, verify, rotación, restore y status
-status: proposed
+status: implemented
 created: 2026-09-13
 ---
 
@@ -55,16 +55,16 @@ JSON de `status`/`verify` a stdout con `--json` (para el reporte por Telegram).
 
 ## Acceptance
 
-- [ ] `guardian backup` con un origen fallido (permiso denegado simulado) termina
+- [x] `guardian backup` con un origen fallido (permiso denegado simulado) termina
       con exit 4, reporta el origen fallido y los orígenes sanos quedan copiados.
-- [ ] `guardian verify` detecta un byte corrupto (hash mismatch) con exit 3 y
+- [x] `guardian verify` detecta un byte corrupto (hash mismatch) con exit 3 y
       reporta el archivo exacto; con manifiesto ausente reporta "incompleto".
-- [ ] `guardian rotate` con keep_last=3 y 5 backups completos deja exactamente
+- [x] `guardian rotate` con keep_last=3 y 5 backups completos deja exactamente
       los 3 más nuevos; un directorio sin manifiesto NO es borrado.
-- [ ] `guardian restore` de un backup a destino limpio reproduce el árbol con
+- [x] `guardian restore` de un backup a destino limpio reproduce el árbol con
       `diff -r` sin diferencias; sin `--overwrite` sobre destino no vacío falla
       con exit 2.
-- [ ] `guardian status --json` emite un array de backups con id, fecha, archivos,
+- [x] `guardian status --json` emite un array de backups con id, fecha, archivos,
       bytes y estado; nunca escribe en el destino.
-- [ ] Cada comando nueva tiene tests unitarios (tmp_path) y la suite completa
+- [x] Cada comando nueva tiene tests unitarios (tmp_path) y la suite completa
       queda verde (`uv run pytest` + `uv run ruff check .`).

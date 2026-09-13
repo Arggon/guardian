@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- `guardian restore <backup|latest> --dest [--overwrite]`: reconstrucción verificada contra el manifiesto (PR final del pipeline v0.2).
+
 - `guardian verify [--backup <id|latest>]`: verifica un backup recomputando
   SHA-256 de cada archivo contra su `manifest.json`; reporta ok /
   hash-mismatch / faltante por archivo y exit 3 ante cualquier divergencia o

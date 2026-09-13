@@ -59,7 +59,7 @@ uv run ruff format .     # formato
 - [x] Esqueleto: config TOML, motor de copia con verificación, CLI `backup --dry-run`
 - [x] Verificación independiente (`guardian verify`) — issue #2
 - [ ] Rotación `keep-last-N` — issue #3
-- [ ] Restore — issue #4
+- [x] Restore — issue #4
 - [ ] Reporte por Telegram — issue #5
 
 Decisiones de diseño en [docs/DECISIONS.md](docs/DECISIONS.md).

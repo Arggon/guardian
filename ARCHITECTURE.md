@@ -53,6 +53,10 @@ guardian/
     config.py          # TOML → Config validada (tomllib); errores = ConfigError
     copier.py          # motor de copia: shutil.copy2 + SHA-256 doble + FileRecord
     backup.py          # orquestación: timestamp, corrida por origen, manifest.json
+    verify.py          # re-computa SHA-256 contra el manifiesto (pure read)
+    rotation.py        # keep-last-N sobre backups completos (nunca toca incompletos)
+    status.py          # reporte de estado de backups (pure read)
+    restore.py         # reconstrucción verificada hacia --dest (pure read del backup)
     verify.py          # verificación de un backup contra su manifiesto (pure read)
   tests/               # pytest, una suite por módulo, tmp_path para FS efímero
   docs/                # DECISIONS.md, FORMAT.md + los docs de gestión (arggon)
